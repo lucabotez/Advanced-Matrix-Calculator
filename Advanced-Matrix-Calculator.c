@@ -707,6 +707,45 @@ int aflare_determinant(int **mat, int n)
     return (det / total); 
 }
 
+void determinare_maxim(int **mat,int nr_l,int nr_c)
+{
+	int maxi=mat[0][0];
+	for(int i=0;i<nr_l;i++)
+		for(int j=0;j<nr_c;j++)
+			if(maxi<mat[i][j])
+				maxi=mat[i][j];
+
+	printf("Elementul maxim este %d\n",maxi);
+}
+
+void ridicare_put_2_fiecare_elem(int **mat,int nr_l,int nr_c,int k)
+{
+	int **aux;
+	aux=malloc(nr_l*sizeof(int *));
+	for(int i=0;i<nr_l;i++)
+		aux[i]=calloc(nr_c,sizeof(int));
+
+
+
+
+	for(int i=0;i<nr_l;i++)
+		for(int j=0;j<nr_c;j++){
+			aux[i][j]=mat[i][j];
+			for(int p=0;p<k-1;p++)
+					aux[i][j]*=mat[i][j];
+		}
+	
+	for(int i=0;i<nr_l;i++){
+		for(int j=0;j<nr_c;j++)
+			printf("%d ",aux[i][j]);
+		printf("\n");
+	}
+
+	for(int i=0;i<nr_l;i++)
+		free(aux[i]);
+	free(aux);
+}
+
 
 int main(void)
 {
@@ -726,6 +765,20 @@ int main(void)
 			int determinant;
 			determinant=aflare_determinant(node->data,node->linie);
 			printf("Determinantul matricei este %d\n",determinant);
+		}else if(comanda == 'A') {
+			int indice,k;
+			scanf("%d",&indice);
+			scanf("%d",&k);
+			ll_node_t*node=ll_get_nth_node(list,indice);
+
+			ridicare_put_2_fiecare_elem(node->data,node->linie,node->coloana,k);
+
+		}else if(comanda == 'E') {
+			int indice;
+			scanf("%d",&indice);
+			ll_node_t*node=ll_get_nth_node(list,indice);
+
+			determinare_maxim(node->data,node->linie,node->coloana);
 		
 		} else if (comanda == 'D') {
 			dimensiune(list);
@@ -757,4 +810,3 @@ int main(void)
 
 return 0;
 }
-
