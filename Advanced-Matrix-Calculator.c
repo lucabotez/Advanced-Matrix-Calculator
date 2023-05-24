@@ -644,50 +644,7 @@ void eliberare(linked_list_t*list)
 	}
 }
  
-double calculateDeterminant(int** matrix, int size) {
-    if (size == 1) {
-		printf("%d",matrix[0][0]);
-        return matrix[0][0];
-    } else {
-        double determinant = 0;
-        int sign = 1;
-        int submatrixSize = size - 1;
-        double** submatrix = (double**)malloc(submatrixSize * sizeof(double*));
- 
-        for (int i = 0; i < submatrixSize; i++) {
-            submatrix[i] = (double*)malloc(submatrixSize * sizeof(double));
-        }
- 
-        for (int i = 0; i < size; i++) {
-            int subrow = 0;
-            int subcol = 0;
- 
-            // Construirea submatricei prin eliminarea rândului și coloanei curente
-            for (int j = 1; j < size; j++) {
-                for (int k = 0; k < size; k++) {
-                    if (k != i) {
-                        submatrix[subrow][subcol] = matrix[j][k];
-                        subcol++;
-                    }
-                }
-                subrow++;
-                subcol = 0;
-            }
- 
-            // Calcularea determinantului recursiv pentru submatrice
-            determinant += sign * matrix[0][i] * calculateDeterminant(submatrix, submatrixSize);
-            sign = -sign;
-        }
- 
-        for (int i = 0; i < submatrixSize; i++) {
-            free(submatrix[i]);
-        }
-        free(submatrix);
-        return determinant;
-    }
-}
- 
- 
+          
  
 int main(void)
 {
