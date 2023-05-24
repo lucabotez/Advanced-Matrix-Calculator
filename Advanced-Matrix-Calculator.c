@@ -643,9 +643,71 @@ void eliberare(linked_list_t*list)
  
 	}
 }
+
+int aflare_determinant(int **mat, int n)
+{
+    int num1, num2, det = 1, index,total = 1;
+    int temp[n + 1];
  
-          
+    // loop for traversing the diagonal elements
+    for (int i = 0; i < n; i++)
+    {
+        index = i;
  
+        // se sare peste elementele care sunt nule
+        while (index < n && mat[index][i] == 0)
+        {
+            index++;
+        }
+		
+		// daca exista un element diferit de 0
+        if (index == n)
+        {
+            continue;
+        }
+
+        if (index != i)
+        {
+            // se interschimba valorile
+            for (int j = 0; j < n; j++)
+            {
+				int aux =mat[index][j];
+				mat[index][j]=mat[i][j];
+				mat[i][j]=aux;
+            }
+            
+			// se tine cont de semnul determinantului din formula
+            det = det * pow(-1, index - i);
+        }
+ 
+        // stocheaza elementele
+        for (int j = 0; j < n; j++)
+        {
+            temp[j] = mat[i][j];
+        }
+        // traversing every row below the diagonal element
+        for (int j = i + 1; j < n; j++)
+        {
+			// valuarea elementului de pe diagonala
+            num1 = temp[i];
+			// valoarea urmatorului element de pe linie
+            num2 = mat[j][i];
+
+            for (int k = 0; k < n; k++)
+                mat[j][k] = (num1 * mat[j][k]) - (num2 * temp[k]);
+            
+            total = total * num1;
+        }
+    }
+ 
+    for (int i = 0; i < n; i++)
+    {
+        det = det * mat[i][i];
+    }
+    return (det / total); 
+}
+
+
 int main(void)
 {
 	linked_list_t*list;
@@ -657,17 +719,14 @@ int main(void)
 		if (comanda == 'L') {
 			incarcare_matrice(list);
 		}else if(comanda=='B'){
-			ll_node_t*node=ll_get_nth_node(list,0);
-			double mat[2][2];
- 
-			//mat[0][0]=2;
-			//mat[0][1]=3;
-			//mat[1][0]=1;
-			//mat[1][1]=1;
-			double determinant=17;
-			determinant=calculateDeterminant((double**)node->data,node->linie);
-			printf("\n%f\n=",determinant);
- 
+			int indice;
+			scanf("%d",&indice);
+			ll_node_t*node=ll_get_nth_node(list,indice);
+
+			int determinant;
+			determinant=aflare_determinant(node->data,node->linie);
+			printf("Determinantul matricei este %d\n",determinant);
+		
 		} else if (comanda == 'D') {
 			dimensiune(list);
 		} else if (comanda == 'P') {
@@ -690,11 +749,12 @@ int main(void)
 		} else {
 			printf("Unrecognized command\n");
 		}
- 
+
 		getchar();
 	}
- 
+
 	free(list);
- 
+
 return 0;
 }
+
