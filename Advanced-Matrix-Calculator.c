@@ -1,11 +1,15 @@
 // Copyright Croitoru Constantin-Bogdan Grupa 314CA 2022-2023
+// Copyright Botez Luca Grupa 314CA 2022-2023
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "functii.h"
+#include "functii_2.h"
 #include "list.h"
+#include "rotatie_matrice.h"
 #include "strassen.h"
 
 #define DIE(assertion, call_description)  \
@@ -21,7 +25,6 @@
 #define MAX_STRING_SIZE 64
 
 void eliberare_memorie_matrice(int **mat, int nr_l);
-
 
 #define D_MOD 10007
 
@@ -403,159 +406,103 @@ void eliberare(linked_list_t *list) {
 	}
 }
 
-int aflare_determinant(int **mat, int n) {
-	int num1, num2, det = 1, index, total = 1;
-	int temp[n + 1];
-
-	// loop for traversing the diagonal elements
-	for (int i = 0; i < n; i++) {
-		index = i;
-
-		// se sare peste elementele care sunt nule
-		while (index < n && mat[index][i] == 0) {
-			index++;
-		}
-
-		// daca exista un element diferit de 0
-		if (index == n) {
-			continue;
-		}
-
-		if (index != i) {
-			// se interschimba valorile
-			for (int j = 0; j < n; j++) {
-				int aux = mat[index][j];
-				mat[index][j] = mat[i][j];
-				mat[i][j] = aux;
-			}
-
-			// se tine cont de semnul determinantului din formula
-			det = det * pow(-1, index - i);
-		}
-
-		// stocheaza elementele
-		for (int j = 0; j < n; j++) {
-			temp[j] = mat[i][j];
-		}
-		// traversing every row below the diagonal element
-		for (int j = i + 1; j < n; j++) {
-			// valuarea elementului de pe diagonala
-			num1 = temp[i];
-			// valoarea urmatorului element de pe linie
-			num2 = mat[j][i];
-
-			for (int k = 0; k < n; k++)
-				mat[j][k] = (num1 * mat[j][k]) - (num2 * temp[k]);
-
-			total = total * num1;
-		}
-	}
-
-	for (int i = 0; i < n; i++) {
-		det = det * mat[i][i];
-	}
-	return (det / total);
-}
-
-void determinare_maxim(int **mat, int nr_l, int nr_c) {
-	int maxi = mat[0][0];
-	for (int i = 0; i < nr_l; i++)
-		for (int j = 0; j < nr_c; j++)
-			if (maxi < mat[i][j])
-				maxi = mat[i][j];
-
-	printf("Elementul maxim este %d\n", maxi);
-}
-
-void ridicare_put_2_fiecare_elem(int **mat, int nr_l, int nr_c, int k) {
-	int **aux;
-	aux = malloc(nr_l * sizeof(int *));
-	for (int i = 0; i < nr_l; i++)
-		aux[i] = calloc(nr_c, sizeof(int));
-
-	for (int i = 0; i < nr_l; i++)
-		for (int j = 0; j < nr_c; j++) {
-			aux[i][j] = mat[i][j];
-			for (int p = 0; p < k - 1; p++)
-				aux[i][j] *= mat[i][j];
-		}
-
-	for (int i = 0; i < nr_l; i++) {
-		for (int j = 0; j < nr_c; j++)
-			printf("%d ", aux[i][j]);
-		printf("\n");
-	}
-
-	for (int i = 0; i < nr_l; i++)
-		free(aux[i]);
-	free(aux);
-}
-
-
 int main(void) {
 	linked_list_t *list;
 	list = ll_create(sizeof(int));
-	char comanda;
+	char comanda[100];
 	int stop = 1;
 	while (stop) {
-		scanf("%c", &comanda);
-		if (comanda == 'L') {
+		fscanf(stdin, "%s", comanda);
+		if (strcmp(comanda, "L") == 0) {
 			incarcare_matrice(list);
-		} else if (comanda == 'b') {
+
+		} else if (strcmp(comanda, "inverse") == 0) {
+			inverse_matrix(list);
+		} else if (strcmp(comanda, "subtract") == 0) {
+			subtract(list);
+		} else if (strcmp(comanda, "min") == 0) {
+			min_elem(list);
+		} else if (strcmp(comanda, "trace") == 0) {
+			trace(list);
+		} else if (strcmp(comanda, "hadamard") == 0) {
+			hadamard(list);
+		} else if (strcmp(comanda, "upper") == 0) {
+			upper(list);
+		} else if (strcmp(comanda, "eig") == 0) {
+			eig(list);
+
+		} else if (strcmp(comanda, "determinant") == 0) {
 			int indice;
 			scanf("%d", &indice);
 			ll_node_t *node = ll_get_nth_node(list, indice);
-
 			int determinant;
 			determinant = aflare_determinant(node->data, node->linie);
 			printf("Determinantul matricei este %d\n", determinant);
-		} else if (comanda == 'r') {
+
+		} else if (strcmp(comanda, "ridicare") == 0) {
 			int indice, k;
 			scanf("%d", &indice);
 			scanf("%d", &k);
 			ll_node_t *node = ll_get_nth_node(list, indice);
+			ridicare_fiecare_elem(node, node->linie, node->coloana, k);
 
-			ridicare_put_2_fiecare_elem(node->data, node->linie, node->coloana, k);
+		} else if (strcmp(comanda, "maxim") == 0) {
+			int indice;
+			scanf("%d", &indice);
+			ll_node_t *node = ll_get_nth_node(list, indice);
+			int maxi = determinare_maxim(node->data, node->linie, node->coloana);
+			printf("Maximul este %d\n", maxi);
 
-		} else if (comanda == 'e') {
+		} else if (strcmp(comanda, "rang") == 0) {
+			int indice;
+			scanf("%d", &indice);
+			ll_node_t *node = ll_get_nth_node(list, indice);
+			int maxi = determinare_rang(node->data, node->linie, node->coloana);
+			printf("Rangul este %d\n", maxi);
+
+		} else if (strcmp(comanda, "doolittle") == 0) {
 			int indice;
 			scanf("%d", &indice);
 			ll_node_t *node = ll_get_nth_node(list, indice);
 
-			determinare_maxim(node->data, node->linie, node->coloana);
+			double **mat;
+			mat = alocare_mat_double(node->linie, node->linie);
+			for (int i = 0; i < node->linie; i++)
+				for (int j = 0; j < node->coloana; j++)
+					mat[i][j] = (double)node->data[i][j];
 
-		} else if (comanda == 'D') {
+			doolittle_algoritm(mat, node->linie);
+
+		} else if (strcmp(comanda, "rotatie") == 0) {
+			rotatie(list);
+
+		} else if (strcmp(comanda, "strassen") == 0) {
+			strassen(list);
+
+		} else if (strcmp(comanda, "D") == 0) {
 			dimensiune(list);
-		} else if (comanda == 'P') {
+		} else if (strcmp(comanda, "P") == 0) {
 			afisare(list);
-		} else if (comanda == 'C') {
+		} else if (strcmp(comanda, "C") == 0) {
 			redimensionare(list);
-		} else if (comanda == 'M') {
+		} else if (strcmp(comanda, "M") == 0) {
 			inmultire(list);
-		} else if (comanda == 'O') {
+		} else if (strcmp(comanda, "O") == 0) {
 			sortare(list);
-		} else if (comanda == 'T') {
+		} else if (strcmp(comanda, "T") == 0) {
 			transpunere(list);
-		} else if (comanda == 'R') {
+		} else if (strcmp(comanda, "R") == 0) {
 			ridicare(list);
-		} else if (comanda == 'F') {
+		} else if (strcmp(comanda, "F") == 0) {
 			eliberare_mat(list);
-
-		} else if (comanda == 'S') {
-			int indice1, indice2;
-			scanf("%d", &indice1);
-			scanf("%d", &indice2);
-
-			strassen(list, indice1, indice2);
-
-		} else if (comanda == 'Q') {
+		} else if (strcmp(comanda, "S") == 0) {
+			strassen(list);
+		} else if (strcmp(comanda, "Q") == 0) {
 			eliberare(list);
 			stop = 0;
 		} else {
 			printf("Unrecognized command\n");
 		}
-
-		getchar();
 	}
 
 	free(list);
