@@ -14,5 +14,6 @@ int determinare_maxim(int **mat, int nr_l, int nr_c);
 void ridicare_fiecare_elem(ll_node_t *nod, int nr_l, int nr_c, int k);
 
 void doolittle_algoritm(double **A, int n);
+void aplicare_suma(linked_list_t *list);
 
 #endif /* FUNCTII_H_ */
