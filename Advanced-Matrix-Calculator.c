@@ -45,7 +45,7 @@ void incarcare_matrice(linked_list_t *list) {
 
 	ll_add_nth_node(list, list->size, mat, nr_l, nr_c);
 
-	// eliberare_memorie_matrice(mat,nr_l);
+	
 	for (int i = 0; i < nr_l; i++)
 		free(mat[i]);
 	free(mat);
@@ -179,7 +179,6 @@ void inmultire(linked_list_t *list) {
 			for (int i = 0; i < nod1->linie; i++)
 				free(mat[i]);
 			free(mat);
-			// eliberare_memorie_matrice(mat,nod1->linie);
 		}
 	}
 }
@@ -215,13 +214,13 @@ void sortare(linked_list_t *list) {
 				a[i] = a[j];
 				a[j] = aux1;
 
-				// nu stiu daca merge
+				
 
 				node2 = ll_get_nth_node(list, j);
 				node1 = ll_remove_nth_node(list, i);
 				ll_add_nth_node(list, i, node2->data, node2->linie, node2->coloana);
 
-				// trebuie eliberata memorie pentru node2
+				
 
 				node2 = ll_remove_nth_node(list, j);
 				eliberare_memorie_matrice(node2->data, node2->linie);
@@ -259,7 +258,6 @@ void transpunere(linked_list_t *list) {
 
 		ll_add_nth_node(list, indice, a, node->coloana, node->linie);
 
-		// tebuie eliberata memoria pentru nodul eliminat !!!
 		for (int i = 0; i < node->coloana; i++)
 			free(a[i]);
 		free(a);
@@ -375,7 +373,6 @@ void ridicare(linked_list_t *list) {
 void eliberare_memorie_matrice(int **mat, int nr_l) {
 	for (int i = 0; i < nr_l; i++)
 		free(mat[i]);
-	// free(mat);
 }
 // se elibereaza memoria pentru o matrice
 void eliberare_mat(linked_list_t *list) {
@@ -436,10 +433,14 @@ int main(void) {
 			scanf("%d", &indice);
 			ll_node_t *node = ll_get_nth_node(list, indice);
 			int determinant;
-			determinant = aflare_determinant(node->data, node->linie);
-			printf("Determinantul matricei este %d\n", determinant);
+			if (node->linie != node->coloana)
+				printf("Matricea trebuie sa fie patrata\n");
+			else {
+				determinant = aflare_determinant(node->data, node->linie);
+				printf("Determinantul matricei este %d\n", determinant);
+			}
 
-		} else if (strcmp(comanda, "ridicare") == 0) {
+		} else if (strcmp(comanda, "putere") == 0) {
 			int indice, k;
 			scanf("%d", &indice);
 			scanf("%d", &k);
@@ -464,14 +465,22 @@ int main(void) {
 			int indice;
 			scanf("%d", &indice);
 			ll_node_t *node = ll_get_nth_node(list, indice);
+			if (node->linie != node->coloana)
+				printf("Matricea trebuie sa fie patrata\n");
+			else {
+				double **mat;
+				mat = alocare_mat_double(node->linie, node->linie);
+				for (int i = 0; i < node->linie; i++)
+					for (int j = 0; j < node->coloana; j++)
+						mat[i][j] = (double)node->data[i][j];
 
-			double **mat;
-			mat = alocare_mat_double(node->linie, node->linie);
-			for (int i = 0; i < node->linie; i++)
-				for (int j = 0; j < node->coloana; j++)
-					mat[i][j] = (double)node->data[i][j];
-
-			doolittle_algoritm(mat, node->linie);
+				doolittle_algoritm(mat, node->linie);
+				for (int i = 0; i < node->linie; i++)
+					free(mat[i]);
+				free(mat);
+			}
+		} else if (strcmp(comanda, "suma") == 0) {
+			aplicare_suma(list);
 
 		} else if (strcmp(comanda, "rotatie") == 0) {
 			rotatie(list);
@@ -496,7 +505,7 @@ int main(void) {
 		} else if (strcmp(comanda, "F") == 0) {
 			eliberare_mat(list);
 		} else if (strcmp(comanda, "S") == 0) {
-			strassen(list);
+			strassen_c(list);
 		} else if (strcmp(comanda, "Q") == 0) {
 			eliberare(list);
 			stop = 0;
