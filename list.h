@@ -1,6 +1,17 @@
-// Croiotru Bogdan
+// Croitoru Bogdan
 #ifndef LIST_H_
 #define LIST_H_
+
+#define DIE(assertion, call_description)  \
+	do {                                  \
+		if (assertion) {                  \
+			fprintf(stderr, "(%s, %d): ", \
+					__FILE__, __LINE__);  \
+			perror(call_description);     \
+			exit(errno);                  \
+		}                                 \
+	} while (0)
+
 
 typedef struct ll_node_t {
 	int **data;
