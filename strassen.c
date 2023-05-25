@@ -1,9 +1,9 @@
+#include "strassen.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "strassen.h"
 #define MODULO 10007
 
 int **alocare_matrice(int rows, int columns) {
@@ -188,7 +188,11 @@ int **strassen_inmultire(int **mat1, int **mat2, int n) {
 	return c;
 }
 
-void strassen(linked_list_t *list, int ind1, int ind2) {
+void strassen(linked_list_t *list) {
+	int ind1, ind2;
+	scanf("%d", &ind1);
+	scanf("%d", &ind2);
+
 	if (ind1 > +list->size || ind1 <= -1 || ind2 >= list->size || ind2 <= -1) {
 		printf("No matrix with the given index\n");
 	} else {
