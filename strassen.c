@@ -202,8 +202,38 @@ void strassen(linked_list_t *list) {
 		if (nod1->coloana == nod2->linie) {
 			int **mat = strassen_inmultire(nod1->data, nod2->data, nod2->linie);
 
-			ll_add_nth_node(list, list->size, mat, nod1->linie, nod2->coloana);
+			for (int i = 0; i < nod1->linie; i++) {
+				for (int j = 0; j < nod2->coloana; j++)
+					printf("%d ", mat[i][j]);
+				printf("\n");
+			}
 
+			for (int i = 0; i < nod1->linie; i++)
+				free(mat[i]);
+			free(mat);
+
+		} else {
+			printf("Cannot perform matrix multiplication\n");
+		}
+	}
+}
+
+// srassen pentru verificare cu checker-ul
+void strassen_c(linked_list_t *list) {
+	int ind1, ind2;
+	scanf("%d", &ind1);
+	scanf("%d", &ind2);
+
+	if (ind1 > +list->size || ind1 <= -1 || ind2 >= list->size || ind2 <= -1) {
+		printf("No matrix with the given index\n");
+	} else {
+		ll_node_t *nod1, *nod2;
+		nod1 = ll_get_nth_node(list, ind1);
+		nod2 = ll_get_nth_node(list, ind2);
+		if (nod1->coloana == nod2->linie) {
+			int **mat = strassen_inmultire(nod1->data, nod2->data, nod2->linie);
+
+			ll_add_nth_node(list, list->size, mat, nod1->linie, nod2->coloana);
 			for (int i = 0; i < nod1->linie; i++)
 				free(mat[i]);
 			free(mat);
