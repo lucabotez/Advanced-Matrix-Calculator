@@ -4,6 +4,7 @@
 
 #include "list.h"
 
+void strassen_c(linked_list_t *list);
 void strassen(linked_list_t *list);
 int **strassen_inmultire(int **mat1, int **mat2, int n);
 int **mat_adunare(int **a, int **b, int n);
